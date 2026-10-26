@@ -8,6 +8,8 @@ namespace PSClassLib.Model
     public class Scout : User
     {
         #region instance fields
+
+
         #endregion
 
         #region Properties

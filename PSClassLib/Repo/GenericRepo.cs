@@ -1,4 +1,5 @@
 ﻿using PSClassLib.Interface;
+using PSClassLib.Model;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -63,6 +64,8 @@ namespace PSClassLib.Repo
             return itemFound;
 
         }
+
+
 
         public T GetById(int id)
         {
