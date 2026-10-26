@@ -10,29 +10,19 @@ namespace PSClassLib.Repo
     {
         #region instance fields
 
-        private GenericRepo<User> _repo;
+
 
         #endregion
 
         #region Properties
 
-        public GenericRepo<User> Repo { get; set; }
+
 
         #endregion
 
         #region Constructors
 
-        public UserRepo()
-        {
-            _repo = new GenericRepo<User>();
-        }
-
-        public UserRepo (GenericRepo<User> repo)
-        {
-            _repo = repo;
-        }
-
-
+   
 
         #endregion
 
@@ -46,11 +36,14 @@ namespace PSClassLib.Repo
                 throw new ArgumentException("Username cannot be null or empty.", nameof(userName));
             }
 
+            // Connect to database, and select user 
+
             User? user = _repo.FirstOrDefault(u => u.Email == userName);
 
             return user ?? throw new KeyNotFoundException($"User with username '{userName}' not found.");
         }
 
+       
         #endregion
 
 
