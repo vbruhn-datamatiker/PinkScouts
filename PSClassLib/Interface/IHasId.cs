@@ -6,5 +6,8 @@ namespace PSClassLib.Interface
 {
     public interface IHasId
     {
+
+
+        int Id { get; set; }
     }
 }

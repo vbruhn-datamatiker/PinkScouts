@@ -1,10 +1,11 @@
-﻿using System;
+﻿using PSClassLib.Interface;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace PSClassLib.Model
 {
-    public class Skill
+    public class Skill : IHasId
     {
         #region instance fields
         #endregion
