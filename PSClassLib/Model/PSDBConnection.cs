@@ -31,7 +31,7 @@ namespace PSClassLib.Model
                 .Build();
 
 
-            _connectionString = config["ElisabethsSecretString"];
+            _connectionString = config["RollatorbandensSecretString"];
 
 
         }
