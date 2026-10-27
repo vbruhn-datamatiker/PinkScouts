@@ -8,30 +8,46 @@ namespace PSClassLib.Repo
 	public class ScoutRepo
 	{
 		#region instance fields
-		private List<Scout> _scouts;
+
+		private PSDBConnection _db;
 		#endregion
 
 		#region Properties
-		public List<Scout> Scouts
-		{
-			get { return _scouts; }
-			set { _scouts = value; }
+
+		public PSDBConnection DB 
+		{ 
+			get { return _db; } 
+			set { _db = value; }
 		}
 		#endregion
 
 		#region Constructors
 		public ScoutRepo()
 		{
-			_scouts = new List<Scout>();
-		}
-		public ScoutRepo(List<Scout> scouts)
+            _db = new PSDBConnection();
+        }
+		public ScoutRepo(PSDBConnection db)
 		{
-			_scouts = scouts;
+			_db = db;
 		}
 		#endregion
 
 		#region Methods
+
+		public Scout Create(Scout scout)
+		{
+			return scout;
+		}
+
+
+		// Do we need to insert a skill into scout here? Should be true, as scout contain skills.
+		public Scout InsertSkill(Scout scout, Skill skill)
+		{
+			return scout;
+		}
 		#endregion
+
+
 
 
 	}
