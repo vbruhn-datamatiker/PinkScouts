@@ -11,16 +11,12 @@ namespace PSClassLib.Repo
 	public class ActivityRepo
 	{
 		#region instance fields
-		private List<Activity> _activities;
+
 		public PSDBConnection db = new PSDBConnection();
 		#endregion
 
 		#region Properties
-		public List<Activity> Activities
-		{
-			get { return _activities; }
-			set { _activities = value; }
-		}
+		
 		public PSDBConnection Db
 		{
 			get { return db; }
@@ -31,18 +27,18 @@ namespace PSClassLib.Repo
 		#region Constructors
 		public ActivityRepo()
 		{
-			_activities = new List<Activity>();
+		
 			db = new PSDBConnection();
 		}
-		public ActivityRepo(List<Activity> activities, PSDBConnection dB)
+		public ActivityRepo(PSDBConnection dB)
 		{
-			_activities = activities;
+		
 			db = dB;
 		}
 		#endregion
 
 		#region Methods
-		public Activity GetById(string id)
+		public Activity GetById(int id)
 		{
 			db.ConnectToDatabase();
 
@@ -72,6 +68,33 @@ namespace PSClassLib.Repo
 			return activity;
 		}
 
+		
+
+		public Activity CreateActivity(Activity activity)
+		{
+			db.ConnectToDatabase();
+
+			string sql = $"INSERT into * (ActivityId, ActivityName, Description, DateTime, Participants) VALUES (@ActivityId, @ActivityName, @Description, @DateTime, @Participants)";
+
+			SqlCommand cmd = new SqlCommand(sql, db.Connection);
+			cmd.Parameters.AddWithValue("@ActivityId", activity.ActivityId);
+			cmd.Parameters.AddWithValue("@ActivityName", activity.ActivityName);
+			cmd.Parameters.AddWithValue("@Description", activity.Description);
+			cmd.Parameters.AddWithValue("@DateTime", activity.DateTime);
+			cmd.Parameters.AddWithValue("@Participants", activity.Participants);
+
+			int row = cmd.ExecuteNonQuery();
+
+			if (row == 0)
+			{
+				throw new KeyNotFoundException($"Aktivitet med {activity.ActivityId} findes ikke");
+			}
+			db.DisconnectFromDatabase();
+			return activity;
+		}
+
+
+
 		public List<Activity> ReadAll()
 		{
 			List<Activity> activityList = new List<Activity>();
@@ -96,14 +119,58 @@ namespace PSClassLib.Repo
 			db.DisconnectFromDatabase();
 			return activityList;
 		}
-		public Activity CreateActivity()
+
+		public Activity UpdateActivity(int id, Activity updatedActivity)
 		{
+			Activity activity = GetById(id);
 			db.ConnectToDatabase();
 
-			string sql = $"INSERT into ";
+			string sql = $"update .........";
+			SqlCommand cmd = new SqlCommand(sql, db.Connection);
 
+			cmd.Parameters.AddWithValue("@ActivityName", updatedActivity.ActivityName);
+			cmd.Parameters.AddWithValue("@Description", updatedActivity.Description);
+			cmd.Parameters.AddWithValue("@DateTime", updatedActivity.DateTime);
+			cmd.Parameters.AddWithValue("@Participants", updatedActivity.Participants);
+
+			int row = cmd.ExecuteNonQuery();
+			db.DisconnectFromDatabase();
+
+			if (row == 1)
+			{
+				return updatedActivity;
+			}
+			else
+			{
+				throw new KeyNotFoundException($"Akvitivtet med {id} findes ikke");
+			}
 
 		}
+
+		public Activity DeleteActivity(int idToRemove)
+		{
+			Activity activity = GetById(idToRemove);
+			db.ConnectToDatabase();
+			string sql = $"DELETE FROM Activites WHERE ActivityId = {idToRemove}";
+
+			SqlCommand cmd = new SqlCommand(sql, db.Connection);
+
+			cmd.Parameters.AddWithValue("@ActivityId", idToRemove);
+
+			int row = cmd.ExecuteNonQuery();
+			db.DisconnectFromDatabase();
+
+			if(row == 1){
+				return activity;
+			}
+			else
+			{
+				throw new KeyNotFoundException($"Aktivitet med {idToRemove} findes ikke");
+			}
+
+		}
+		
+
 		#endregion
 
 	}
