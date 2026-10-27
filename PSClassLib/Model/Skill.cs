@@ -8,7 +8,7 @@ namespace PSClassLib.Model
     public class Skill : IHasId
     {
         #region instance fields
-        private int _skillId;
+        private int _id;
         private string _skillName;
 		private int _skillMastery;
 		#endregion
@@ -16,10 +16,10 @@ namespace PSClassLib.Model
 		#region Properties
 		#endregion
 
-		public int SkillId
+		public int Id
 		{
-			get { return _skillId; }
-			set { _skillId = value; }
+			get { return _id; }
+			set { _id = value; }
 		}
 		public string SkillName
 		{
@@ -36,14 +36,14 @@ namespace PSClassLib.Model
 
 		public Skill()
 		{
-			_skillId = 0;
+			_id = 0;
 			_skillName = "";
 			_skillMastery = 0;
 		}
 
 		public Skill(int skillId, string skillName, int skillMastery)
 		{
-			_skillId = skillId;
+			_id = skillId;
 			_skillName = skillName;
 			_skillMastery = skillMastery;
 		}
@@ -51,7 +51,7 @@ namespace PSClassLib.Model
 
 		public override string ToString()
 		{
-			return $"Id : {_skillId}, navn : {_skillName}, Færdighedsniveau : {_skillMastery}";
+			return $"Id : {_id}, navn : {_skillName}, Færdighedsniveau : {_skillMastery}";
 		}
 		#endregion
 

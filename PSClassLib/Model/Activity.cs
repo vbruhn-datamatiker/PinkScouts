@@ -2,24 +2,23 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using PSClassLib.Repo;
 
 namespace PSClassLib.Model
 {
     public class Activity : IHasId 
     {
         #region instance fields
-        private int _activityId;
+        private int _id;
 		private string _activityName;
 		private string _description;
-		private DateTime dateTime;
-		private int _participants;
 		#endregion
 
 		#region Properties
-		public int ActivityId
+		public int Id
 		{
-			get { return _activityId; }
-			set { _activityId = value; }
+			get { return _id; }
+			set { _id = value; }
 		}
 		public string ActivityName
 		{
@@ -31,41 +30,28 @@ namespace PSClassLib.Model
 			get { return _description; }
 			set { _description = value; }
 		}
-		public DateTime DateTime
-		{
-			get { return dateTime; }
-			set { dateTime = value; }
-		}
-		public int Participants
-		{
-			get { return _participants; }
-			set { _participants = value; }
-		}
+
 		#endregion
 
 		#region Constructors
 		public Activity()
 		{
-			_activityId = 0;
+			_id = 0;
 			_activityName = "";
 			_description = "";
-			dateTime = DateTime.Now;
-			_participants = 0;
 		}
-		public Activity(int activityId, string activityName, string description, DateTime dateTime, int participants)
+		public Activity(int activityId, string activityName, string description)
 		{
-			_activityId = activityId;
+			_id = activityId;
 			_activityName = activityName;
 			_description = description;
-			this.dateTime = dateTime;
-			_participants = participants;
 		}
 		#endregion
 
 		#region methods
 		public override string ToString()
 		{
-			return $"Id : {_activityId}, navn : {_activityName}, beskrivelse : {_description}, dato og tid : {dateTime}, deltagere : {_participants}";
+			return $"Id : {_id}, navn : {_activityName}, beskrivelse : {_description}";
 		}
 		#endregion
 

@@ -54,10 +54,8 @@ namespace PSClassLib.Repo
 				int ActivityId = (int)reader["ActivityId"];
 				string ActivityName = (string)reader["ActivityName"];
 				string Description = (string)reader["Description"];
-				DateTime dateTime = (DateTime)reader["DateTime"];
-				int participants = (int)reader["Participants"];
 
-				activity = new Activity(ActivityId, ActivityName, Description, dateTime, participants);
+				activity = new Activity(ActivityId, ActivityName, Description);
 			}
 			else
 			{
@@ -74,20 +72,18 @@ namespace PSClassLib.Repo
 		{
 			db.ConnectToDatabase();
 
-			string sql = $"INSERT into * (ActivityId, ActivityName, Description, DateTime, Participants) VALUES (@ActivityId, @ActivityName, @Description, @DateTime, @Participants)";
+			string sql = $"INSERT into * (ActivityId, ActivityName, Description) VALUES (@ActivityId, @ActivityName, @Description)";
 
 			SqlCommand cmd = new SqlCommand(sql, db.Connection);
-			cmd.Parameters.AddWithValue("@ActivityId", activity.ActivityId);
+			cmd.Parameters.AddWithValue("@ActivityId", activity.Id);
 			cmd.Parameters.AddWithValue("@ActivityName", activity.ActivityName);
 			cmd.Parameters.AddWithValue("@Description", activity.Description);
-			cmd.Parameters.AddWithValue("@DateTime", activity.DateTime);
-			cmd.Parameters.AddWithValue("@Participants", activity.Participants);
 
 			int row = cmd.ExecuteNonQuery();
 
 			if (row == 0)
 			{
-				throw new KeyNotFoundException($"Aktivitet med {activity.ActivityId} findes ikke");
+				throw new KeyNotFoundException($"Aktivitet med {activity.Id} findes ikke");
 			}
 			db.DisconnectFromDatabase();
 			return activity;
@@ -109,10 +105,9 @@ namespace PSClassLib.Repo
 				int ActivityId = (int)reader["ActivityId"];
 				string ActivityName = (string)reader["ActivityName"];
 				string Description = (string)reader["Description"];
-				DateTime DateTime = (DateTime)reader["DateTime"];
-				int Participants = (int)reader["Participants"];
 
-				Activity activity = new Activity(ActivityId, ActivityName, Description, DateTime, Participants);
+
+				Activity activity = new Activity(ActivityId, ActivityName, Description);
 
 				activityList.Add(activity);
 			}
@@ -130,8 +125,6 @@ namespace PSClassLib.Repo
 
 			cmd.Parameters.AddWithValue("@ActivityName", updatedActivity.ActivityName);
 			cmd.Parameters.AddWithValue("@Description", updatedActivity.Description);
-			cmd.Parameters.AddWithValue("@DateTime", updatedActivity.DateTime);
-			cmd.Parameters.AddWithValue("@Participants", updatedActivity.Participants);
 
 			int row = cmd.ExecuteNonQuery();
 			db.DisconnectFromDatabase();
