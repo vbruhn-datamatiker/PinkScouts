@@ -4,11 +4,12 @@ using System.Text;
 using PSClassLib.Model;
 using Microsoft.Data.SqlClient;
 using System.ComponentModel.Design;
+using PSClassLib.Interface;
 
 
 namespace PSClassLib.Repo
 {
-	public class ActivityRepo
+	public class ActivityRepo : IRepo<Activity>
 	{
 		#region instance fields
 
@@ -68,7 +69,7 @@ namespace PSClassLib.Repo
 
 		
 
-		public Activity CreateActivity(Activity activity)
+		public Activity Create(Activity activity)
 		{
 			db.ConnectToDatabase();
 
@@ -115,7 +116,7 @@ namespace PSClassLib.Repo
 			return activityList;
 		}
 
-		public Activity UpdateActivity(int id, Activity updatedActivity)
+		public Activity Update(Activity updatedActivity, int id)
 		{
 			Activity activity = GetById(id);
 			db.ConnectToDatabase();
@@ -140,7 +141,7 @@ namespace PSClassLib.Repo
 
 		}
 
-		public Activity DeleteActivity(int idToRemove)
+		public Activity Remove(int idToRemove)
 		{
 			Activity activity = GetById(idToRemove);
 			db.ConnectToDatabase();

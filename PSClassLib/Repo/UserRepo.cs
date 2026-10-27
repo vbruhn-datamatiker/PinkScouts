@@ -47,7 +47,9 @@ namespace PSClassLib.Repo
 
             // Connect to database, and select user 
 
-            User? user = _repo.FirstOrDefault(u => u.Email == userName);
+            User user = null;
+
+            //user = _repo.FirstOrDefault(u => u.Email == userName);
 
             return user ?? throw new KeyNotFoundException($"User with username '{userName}' not found.");
         }
