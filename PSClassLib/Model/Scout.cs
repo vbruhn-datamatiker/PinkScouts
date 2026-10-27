@@ -1,4 +1,5 @@
 ﻿using PSClassLib.Interface;
+using PSClassLib.Repo;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,7 +10,7 @@ namespace PSClassLib.Model
     {
         #region instance fields
         private int _age;
-
+		private SkillRepo _skills;
 		#endregion
 
 		#region Properties
@@ -20,16 +21,23 @@ namespace PSClassLib.Model
 			get { return _age; }
 			set { _age = value; }
 		}
+		public SkillRepo Skills 
+		{  
+			get { return _skills; } 
+			set { _skills = value; } 
+		}
 
 		#endregion
 		#region Constructors
 		public Scout() : base()
 		{
 			_age = 0;
+			_skills = new SkillRepo();
 		}
-		public Scout(int id, string firstName, string lastName, bool isLeader, string email, byte[] password, int age) : base(id, firstName, lastName, isLeader, email, password)
+		public Scout(int id, string firstName, string lastName, bool isLeader, string email, byte[] password, int age, SkillRepo skills) : base(id, firstName, lastName, isLeader, email, password)
 		{
 			_age = age;
+			_skills = skills;
 		}
 		#endregion
 
