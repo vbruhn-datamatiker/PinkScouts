@@ -1,5 +1,7 @@
 <Solution>
   <Project Path="PinkScouts/PinkScouts.csproj" />
-  <Project Path="PinkScoutTest/PinkScoutTest.csproj" Id="b7c8c49f-313f-4c33-bc0e-a1af4a210b3a" />
+  <Project Path="PinkScoutTest/PinkScoutTest.csproj" Id="b7c8c49f-313f-4c33-bc0e-a1af4a210b3a">
+    <Build Solution="Debug|*" Project="false" />
+  </Project>
   <Project Path="PSClassLib/PSClassLib.csproj" Id="487e6ec5-217c-430a-b3bb-6123e751cc4a" />
 </Solution>
