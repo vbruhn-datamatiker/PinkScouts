@@ -9,27 +9,36 @@ namespace PSClassLib.Repo
     public class UserRepo
     {
         #region instance fields
+        private List <User> _users;
+
+		#endregion
+
+		#region Properties
+        public List<User> Users
+		{
+			get { return _users; }
+			set { _users = value; }
+		}
+
+		#endregion
+
+		#region Constructors
+
+        public UserRepo()
+		{
+			_users = new List<User>();
+		}
+        public UserRepo(List<User> users)
+        { 
+        _users = users;
+		}
+
+		#endregion
+
+		#region Methods
 
 
-
-        #endregion
-
-        #region Properties
-
-
-
-        #endregion
-
-        #region Constructors
-
-   
-
-        #endregion
-
-        #region Methods
-
-
-        public User GetByEmail(string? userName)
+		public User GetByEmail(string? userName)
         {
             if (string.IsNullOrEmpty(userName))
             {
