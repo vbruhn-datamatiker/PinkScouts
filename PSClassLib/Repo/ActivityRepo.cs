@@ -8,7 +8,7 @@ using System.ComponentModel.Design;
 
 namespace PSClassLib.Repo
 {
-	internal class ActivityRepo
+	public class ActivityRepo
 	{
 		#region instance fields
 		private List<Activity> _activities;
@@ -53,7 +53,7 @@ namespace PSClassLib.Repo
 			SqlDataReader reader = cmd.ExecuteReader();
 			Activity? activity = null;
 
-			if(reader.Read())
+			if (reader.Read())
 			{
 				int ActivityId = (int)reader["ActivityId"];
 				string ActivityName = (string)reader["ActivityName"];
@@ -68,9 +68,43 @@ namespace PSClassLib.Repo
 				db.DisconnectFromDatabase();
 				throw new Exception($"aktivitet med {id} findes ikke.");
 			}
+			db.DisconnectFromDatabase();
+			return activity;
+		}
+
+		public List<Activity> ReadAll()
+		{
+			List<Activity> activityList = new List<Activity>();
+			db.ConnectToDatabase();
+
+			string sql = "SELECT * FROM Activities";
+			SqlCommand cmd = new SqlCommand(sql, db.Connection);
+			SqlDataReader reader = cmd.ExecuteReader();
+
+			while(reader.Read())
+			{
+				int ActivityId = (int)reader["ActivityId"];
+				string ActivityName = (string)reader["ActivityName"];
+				string Description = (string)reader["Description"];
+				DateTime DateTime = (DateTime)reader["DateTime"];
+				int Participants = (int)reader["Participants"];
+
+				Activity activity = new Activity(ActivityId, ActivityName, Description, DateTime, Participants);
+
+				activityList.Add(activity);
+			}
+			db.DisconnectFromDatabase();
+			return activityList;
+		}
+		public Activity CreateActivity()
+		{
+			db.ConnectToDatabase();
+
+			string sql = $"INSERT into ";
 
 
 		}
 		#endregion
-	
+
+	}
 }
