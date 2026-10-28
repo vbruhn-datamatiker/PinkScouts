@@ -1,0 +1,56 @@
+﻿@page
+@model PinkScouts.Pages.ScoutsModel
+@{
+    ViewData["Title"] = "Spejdere";
+}
+
+<section class="page-header">
+    <h1 class="fw-bold">Spejdere</h1>
+    <p class="lead mb-0">Liste over spejdere og ledere</p>
+</section>
+
+@if (Model.ErrorMessage != null)
+{
+    <div class="alert alert-warning" role="alert">@Model.ErrorMessage</div>
+}
+else if (Model.Scouts.Count == 0)
+{
+    <div class="empty-state text-center">
+        <p class="mb-0">Der er ingen spejdere endnu.</p>
+    </div>
+}
+else
+{
+    <p class="text-muted">@Model.Scouts.Count personer</p>
+
+    <div class="table-responsive pb-5">
+        <table class="table table-hover align-middle scout-table">
+            <thead>
+                <tr>
+                    <th>Navn</th>
+                    <th>Alder</th>
+                    <th>Rolle</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var scout in Model.Scouts)
+                {
+                    <tr>
+                        <td>@scout.FirstName @scout.LastName</td>
+                        <td>@scout.Age år</td>
+                        <td>
+                            @if (scout.IsLeader)
+                            {
+                                <span class="badge bg-pink">Leder</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Spejder</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

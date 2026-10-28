@@ -27,6 +27,9 @@ namespace PinkScouts
             // Adding scope for Activities
             builder.Services.AddScoped<IRepo<Activity>, ActivityRepo>();
 
+            // Adding scope for Scouts
+            builder.Services.AddScoped<IRepo<Scout>, ScoutRepo>();
+
             //
             // for setting up claims based authentication with cookies, we need to add the following code to the Program.cs file:
             //
