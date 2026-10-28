@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.Data.SqlClient;
 using PSClassLib.Interface;
 using PSClassLib.Model;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace PSClassLib.Repo
 {
@@ -57,7 +58,29 @@ namespace PSClassLib.Repo
 
         public List<Scout> ReadAll()
         {
-            throw new NotImplementedException();
+            List<Scout> scoutList = new List<Scout>();
+            _db.ConnectToDatabase();
+
+            // Scout only has UserID and Age - so needs to be joined with user
+            string sql = "SELECT u.UserId, u.FirstName, u.LastName, u.IsLeader, u.Email, s.Age " +
+                         "FROM SCOUT s JOIN [USER] u ON u.UserId = s.UserId";
+            SqlCommand cmd = new SqlCommand(sql, Db.Connection);
+            SqlDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                Scout scout = new Scout();
+                scout.Id = (int)reader["UserId"];
+                scout.FirstName = (string)reader["FirstName"];
+                scout.LastName = (string)reader["LastName"];
+                scout.IsLeader = (bool)reader["IsLeader"];
+                scout.Email = (string)reader["Email"];
+                scout.Age = (int)reader["Age"];
+
+                scoutList.Add(scout);
+            }
+            Db.DisconnectFromDatabase();
+            return scoutList;
         }
 
         public Scout GetById(int id)

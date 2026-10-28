@@ -9,7 +9,7 @@ namespace PSClassLib.Model
 
         protected readonly PSDBConnection _db;
 
-        public PSDBConnection Db { get; }
+        public PSDBConnection Db { get { return _db; } }
 
         public BasicDB(PSDBConnection db)
         {
