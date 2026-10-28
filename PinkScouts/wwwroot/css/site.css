@@ -1,3 +1,4 @@
+/* === Default Razorpage .css === */
 html {
   font-size: 14px;
 }
@@ -29,3 +30,15 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+
+/* ===== Added CSS ===== */
+
+/* === Frontpage === */
+.frontpage {
+    height: 60vh; /* 60% of the screen height; or e.g. 400px */
+    background-size: cover; /* scale the image to fill the box, cropping if needed */
+    background-position: center; /* keep the middle of the image in view */
+    background-repeat: no-repeat;
+}
+

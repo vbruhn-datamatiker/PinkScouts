@@ -1,3 +1,6 @@
+using PSClassLib.Interface;
+using PSClassLib.Model;
+using PSClassLib.Repo;
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace PinkScouts
@@ -10,6 +13,11 @@ namespace PinkScouts
 
             // Add services to the container.
             builder.Services.AddRazorPages();
+            
+            // Scoped gives every request its own repo
+            // When a page asks for IRepo<Activity>, give it an ActivityRepo (new one per request)
+            builder.Services.AddScoped<IRepo<Activity>, ActivityRepo>();
+
 
 
 

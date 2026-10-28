@@ -13,7 +13,9 @@
     <!-- ==== LAYOUT ==== -->
 
 <body>
-    <header>
+
+    <!-- class="sticky-top" fixates navbar to the top -->
+    <header class="sticky-top">
 
         <!-- ==== NAVBAR ==== -->
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
@@ -38,6 +40,11 @@
                         <!-- == Activities Page == -->
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Activities">Aktiviteter</a>
+                        </li>
+
+                        <!-- == Profile Page == -->
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-page="/profile">Profil</a>
                         </li>
 
                         <!-- == Privacy == -->  

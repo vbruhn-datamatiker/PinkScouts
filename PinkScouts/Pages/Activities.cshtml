@@ -2,3 +2,50 @@
 @model PinkScouts.Pages.ActivitiesModel
 @{
 }
+
+<!-- === Activities Page === -->
+
+<!-- ==== Page header ==== -->
+<section class="page-header">
+    <h1 class="fw-bold">Aktiviteter</h1>
+    <p class="lead mb-0">
+        Aktiviteter for Spejderlejr i Hedeland 2027.
+    </p>
+</section>
+
+<!-- ==== ERROR ==== -->
+@if (Model.ErrorMessage != null)
+{
+    <div class="alert alert-warning" role="alert">
+        @Model.ErrorMessage
+    </div>
+}
+
+<!-- ==== EMPTY ==== -->
+else if (Model.Activities.Count == 0)
+{
+<div class="empty-state text-center">
+    <h2 class="h5">Ingen aktiviteter endnu</h2>
+    <p class="mb-0">Der er ikke oprettet nogen aktiviteter.</p>
+</div>
+}
+
+<!-- ==== ACTIVITY LIST ==== -->
+else
+{
+<p class="text-muted">@Model.Activities.Count aktiviteter</p>
+
+<div class="row g-4 pb-5">
+    @foreach (var activity in Model.Activities)
+    {
+        <div class="col-md-6 col-lg-4">
+            <div class="card activity-card h-100">
+                <div class="card-body">
+                    <h2 class="h5 card-title">@activity.ActivityName</h2>
+                    <p class="card-text">@activity.Description</p>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+}
