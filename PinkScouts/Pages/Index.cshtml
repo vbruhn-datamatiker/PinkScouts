@@ -3,8 +3,56 @@
 @{
     ViewData["Title"] = "Home page";
 }
+ 
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">Søren</a>.</p>
+<!-- === Front page picture ===-->
+<div class="frontpage" style="background-image: url('images/scouts.png')">
+
 </div>
+
+<!-- === Intro === -->
+<section class="hero text-center">
+    <h1 class="display-4 fw-bold">De Lyserøde Spejdere</h1>
+    <p class="lead">
+        Spejderlejr i Hedeland
+    </p>
+    <a class="btn btn-pink btn-lg" asp-page="/Activities">Se vores aktiviteter</a>
+</section>
+
+<!-- ==== Aktiviteter ==== -->
+<section class="py-5">
+    <h2 class="text-center mb-4">Hvad laver vi?</h2>
+
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card feature-card h-100">
+                <div class="card-body">
+                    <div class="feature-icon">1</div>
+                    <h3 class="h5 card-title">Aktiviteter</h3>
+                    <p class="card-text">
+                        Se en oversigt over alle aktiviteter for den kommende Spejderlejr.
+                    </p>
+                    <a class="card-link" asp-page="/Activities">Gå til aktiviteter &rarr;</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card feature-card h-100">
+                <div class="card-body">
+                    <div class="feature-icon">2</div>
+                    <h3 class="h5 card-title">Gå til din profil.</h3>
+                    <p class="card-text">
+                        Login på din profil og se oversigt over tilmeldte aktiviteter
+                    </p>
+                    <a class="card-link" asp-page="/profile">Login &rarr;</a>
+                </div>
+            </div>
+        </div>
+
+      
+    </div>
+</section>
+
+
+

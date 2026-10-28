@@ -1,3 +1,7 @@
+using PSClassLib.Interface;
+using PSClassLib.Model;
+using PSClassLib.Repo;
+
 namespace PinkScouts
 {
     public class Program
@@ -8,6 +12,11 @@ namespace PinkScouts
 
             // Add services to the container.
             builder.Services.AddRazorPages();
+            
+            // Scoped gives every request its own repo
+            // When a page asks for IRepo<Activity>, give it an ActivityRepo (new one per request)
+            builder.Services.AddScoped<IRepo<Activity>, ActivityRepo>();
+
 
             var app = builder.Build();
 
