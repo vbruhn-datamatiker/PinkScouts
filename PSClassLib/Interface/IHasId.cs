@@ -8,6 +8,6 @@ namespace PSClassLib.Interface
     {
 
 
-        int Id { get; set; }
+        int Id { get; }
     }
 }

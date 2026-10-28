@@ -6,39 +6,36 @@ using PSClassLib.Model;
 
 namespace PSClassLib.Repo
 {
-    public class UserRepo
+    public class UserRepo : BasicDB, IRepo<User>
     {
         #region instance fields
-        private List <User> _users;
 
-		#endregion
 
-		#region Properties
-        public List<User> Users
-		{
-			get { return _users; }
-			set { _users = value; }
-		}
+        #endregion
 
+        #region Properties
+    
 		#endregion
 
 		#region Constructors
 
-        public UserRepo()
-		{
-			_users = new List<User>();
-		}
-        public UserRepo(List<User> users)
-        { 
-        _users = users;
+
+        public UserRepo(PSDBConnection db) : base(db)
+        {
+
 		}
 
-		#endregion
+        public User Create(User item)
+        {
+            throw new NotImplementedException();
+        }
 
-		#region Methods
+        #endregion
+
+        #region Methods
 
 
-		public User GetByEmail(string? userName)
+        public User GetByEmail(string? userName)
         {
             if (string.IsNullOrEmpty(userName))
             {
@@ -54,7 +51,27 @@ namespace PSClassLib.Repo
             return user ?? throw new KeyNotFoundException($"User with username '{userName}' not found.");
         }
 
-       
+        public User GetById(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<User> ReadAll()
+        {
+            throw new NotImplementedException();
+        }
+
+        public User Remove(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public User Update(User item, int id)
+        {
+            throw new NotImplementedException();
+        }
+
+
         #endregion
 
 

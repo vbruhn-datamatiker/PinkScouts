@@ -6,30 +6,22 @@ using PSClassLib.Model;
 
 namespace PSClassLib.Repo
 {
-	public class ScoutRepo : IRepo<Scout>
+	public class ScoutRepo : BasicDB, IRepo<Scout>
     {
 		#region instance fields
 
-		private PSDBConnection _db;
 		#endregion
+
 
 		#region Properties
 
-		public PSDBConnection Db 
-		{ 
-			get { return _db; } 
-			set { _db = value; }
-		}
+
 		#endregion
 
 		#region Constructors
-		public ScoutRepo()
-		{
-            _db = new PSDBConnection();
-        }
-		public ScoutRepo(PSDBConnection db)
-		{
-			_db = db;
+		public ScoutRepo(PSDBConnection db) : base(db)
+        {
+
 		}
         #endregion
 
@@ -40,9 +32,10 @@ namespace PSClassLib.Repo
 
         // Do we need to insert a skill into scout here? Should be true, as scout contain skills. 
         // Where else is this needed? In the SkillRepo? We need to insert a skill into the scout, so we need to do it here.
-        public Scout InsertSkill(Scout scout, Skill skill)
+        public Scout AddSkill(int skillId, int scoutId)
 		{
-			return scout;
+            Scout scout = GetById(scoutId);
+            return scout;
 		}
 
 
