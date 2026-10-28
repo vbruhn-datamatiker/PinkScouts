@@ -76,6 +76,8 @@ namespace PSClassLib.Repo
                 scout.IsLeader = (bool)reader["IsLeader"];
                 scout.Email = (string)reader["Email"];
                 scout.Age = (int)reader["Age"];
+                scout.Skills = new List<Skill>(); // Initialize the Skills list
+
 
                 scoutList.Add(scout);
             }
