@@ -110,7 +110,13 @@ namespace PinkScoutTest
         [Fact]
         public void ReadAllScouts()
         {
-          
+            // Arrange & Act     
+            List<Scout> scouts = _repo.ReadAll();
+            // Assert
+            Assert.NotNull(scouts);
+            Assert.Contains(scouts, s => s.FirstName == "John" && s.LastName == "Doe");
+            Assert.Contains(scouts, s => s.FirstName == "Jane" && s.LastName == "Smith");
+            Assert.Equal(2, scouts.Count);
         }
 
 
