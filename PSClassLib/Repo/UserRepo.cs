@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.Data.SqlClient;
 using PSClassLib.Interface;
 using PSClassLib.Model;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace PSClassLib.Repo
 {
@@ -35,20 +36,41 @@ namespace PSClassLib.Repo
         #region Methods
 
 
-        public User GetByEmail(string? userName)
+        public User GetByEmail(string? email)
         {
-            if (string.IsNullOrEmpty(userName))
+            if (string.IsNullOrEmpty(email))
             {
-                throw new ArgumentException("Username cannot be null or empty.", nameof(userName));
+                throw new ArgumentException("Username cannot be null or empty.", nameof(email));
             }
 
             // Connect to database, and select user 
 
-            User user = null;
+            Db.ConnectToDatabase();
 
-            //user = _repo.FirstOrDefault(u => u.Email == userName);
+            string sql = "SELECT * FROM USER WHERE Email = @Email";
 
-            return user ?? throw new KeyNotFoundException($"User with username '{userName}' not found.");
+            SqlCommand cmd = new SqlCommand(sql, Db.Connection);
+            SqlDataReader reader = cmd.ExecuteReader();
+            User? user = null;
+
+            if (reader.Read())
+            {
+                int id = (int)reader["UserId"];
+                string firstName = (string)reader["FirstName"];
+                string lastName = (string)reader["LastName"];
+                bool isLeader = (bool)reader["IsLeader"];
+                byte[] password = (byte[])reader["Password"];
+
+                Db.DisconnectFromDatabase();
+                return user = new User(id, firstName, lastName, isLeader, email, password);
+            }
+            else
+            {
+                Db.DisconnectFromDatabase();
+                throw new KeyNotFoundException($"Bruger med mail '{email}' kunne ikke findes.");
+            }
+
+            
         }
 
         public User GetById(int id)
