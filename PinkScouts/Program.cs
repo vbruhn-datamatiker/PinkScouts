@@ -13,13 +13,19 @@ namespace PinkScouts
 
             // Add services to the container.
             builder.Services.AddRazorPages();
-            
+
             // Scoped gives every request its own repo
             // When a page asks for IRepo<Activity>, give it an ActivityRepo (new one per request)
+
+            // Register the PSDBConnection so our Database is scoped (and are used when scoping to our repos)
+            builder.Services.AddScoped<PSDBConnection>();
+
+            // Adding scope for Users (which now has its dependency satisfied)
+            builder.Services.AddScoped<IRepo<User>, UserRepo>();
+            // Note: Or however you have currently registered your open generic IRepo<T>
+
+            // Adding scope for Activities
             builder.Services.AddScoped<IRepo<Activity>, ActivityRepo>();
-
-
-
 
             //
             // for setting up claims based authentication with cookies, we need to add the following code to the Program.cs file:
