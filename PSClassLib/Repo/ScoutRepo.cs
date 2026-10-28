@@ -46,6 +46,7 @@ namespace PSClassLib.Repo
 		}
 
 
+
         public Scout Create(Scout scout)
         {
             return scout;
