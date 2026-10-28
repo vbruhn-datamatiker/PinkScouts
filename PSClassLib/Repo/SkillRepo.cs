@@ -1,37 +1,68 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using PSClassLib.Interface;
 using PSClassLib.Model;
 
 namespace PSClassLib.Repo
 {
-	public class SkillRepo
+	public class SkillRepo : IRepo<Skill>
 	{
-		#region instance fields
-		private List<Skill> _skills;
-		#endregion
+        #region instance fields
+        private PSDBConnection _db = new PSDBConnection();
+        #endregion
 
-		#region Properties
-		public List<Skill> Skills
+        #region Properties
+
+        public PSDBConnection Db
+        {
+            get { return _db; }
+            set { _db = value; }
+        }
+
+        #endregion
+
+        #region Constructors
+        #endregion
+        public SkillRepo()
 		{
-		get { return _skills; }
-		set { _skills = value; }
-		}
-		#endregion
-
-		#region Constructors
-		#endregion
-		public SkillRepo()
+			_db = new PSDBConnection();
+        }
+		public SkillRepo(PSDBConnection db)
 		{
-			_skills = new List<Skill>();
+			_db = db;
 		}
-		public SkillRepo(List<Skill> skills)
-		{
-			_skills = skills;
-		}
-		#region Methods
-		#endregion
 
 
-	}
+        #region Methods
+        public Skill Create(Skill item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Skill GetById(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<Skill> ReadAll()
+        {
+            throw new NotImplementedException();
+        }
+
+        public Skill Remove(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Skill Update(Skill item, int id)
+        {
+            throw new NotImplementedException();
+        }
+
+
+        #endregion
+
+
+    }
 }
