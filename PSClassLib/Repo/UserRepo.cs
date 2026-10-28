@@ -1,60 +1,99 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.Data.SqlClient;
 using PSClassLib.Interface;
 using PSClassLib.Model;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace PSClassLib.Repo
 {
-    public class UserRepo
+    public class UserRepo : BasicDB, IRepo<User>
     {
         #region instance fields
-        private List <User> _users;
 
-		#endregion
 
-		#region Properties
-        public List<User> Users
-		{
-			get { return _users; }
-			set { _users = value; }
-		}
+        #endregion
 
+        #region Properties
+    
 		#endregion
 
 		#region Constructors
 
-        public UserRepo()
-		{
-			_users = new List<User>();
-		}
-        public UserRepo(List<User> users)
-        { 
-        _users = users;
-		}
 
-		#endregion
-
-		#region Methods
-
-
-		public User GetByEmail(string? userName)
+        public UserRepo(PSDBConnection db) : base(db)
         {
-            if (string.IsNullOrEmpty(userName))
+
+		}
+
+        public User Create(User item)
+        {
+            throw new NotImplementedException();
+        }
+
+        #endregion
+
+        #region Methods
+
+
+        public User GetByEmail(string? email)
+        {
+            if (string.IsNullOrEmpty(email))
             {
-                throw new ArgumentException("Username cannot be null or empty.", nameof(userName));
+                throw new ArgumentException("Username cannot be null or empty.", nameof(email));
             }
 
             // Connect to database, and select user 
 
-            User user = null;
+            Db.ConnectToDatabase();
 
-            //user = _repo.FirstOrDefault(u => u.Email == userName);
+            string sql = "SELECT * FROM USER WHERE Email = @Email";
 
-            return user ?? throw new KeyNotFoundException($"User with username '{userName}' not found.");
+            SqlCommand cmd = new SqlCommand(sql, Db.Connection);
+            SqlDataReader reader = cmd.ExecuteReader();
+            User? user = null;
+
+            if (reader.Read())
+            {
+                int id = (int)reader["UserId"];
+                string firstName = (string)reader["FirstName"];
+                string lastName = (string)reader["LastName"];
+                bool isLeader = (bool)reader["IsLeader"];
+                byte[] password = (byte[])reader["Password"];
+
+                Db.DisconnectFromDatabase();
+                return user = new User(id, firstName, lastName, isLeader, email, password);
+            }
+            else
+            {
+                Db.DisconnectFromDatabase();
+                throw new KeyNotFoundException($"Bruger med mail '{email}' kunne ikke findes.");
+            }
+
+            
         }
 
-       
+        public User GetById(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<User> ReadAll()
+        {
+            throw new NotImplementedException();
+        }
+
+        public User Remove(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public User Update(User item, int id)
+        {
+            throw new NotImplementedException();
+        }
+
+
         #endregion
 
 

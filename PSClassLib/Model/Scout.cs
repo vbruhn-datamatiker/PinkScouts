@@ -10,7 +10,7 @@ namespace PSClassLib.Model
     {
         #region instance fields
         private int _age;
-		private SkillRepo _skills;
+		private List<Skill> _skills;
 		#endregion
 
 		#region Properties
@@ -21,7 +21,7 @@ namespace PSClassLib.Model
 			get { return _age; }
 			set { _age = value; }
 		}
-		public SkillRepo Skills 
+		public List<Skill> Skills 
 		{  
 			get { return _skills; } 
 			set { _skills = value; } 
@@ -32,9 +32,9 @@ namespace PSClassLib.Model
 		public Scout() : base()
 		{
 			_age = 0;
-			_skills = new SkillRepo();
+			_skills = new List<Skill>();
 		}
-		public Scout(int id, string firstName, string lastName, bool isLeader, string email, byte[] password, int age, SkillRepo skills) : base(id, firstName, lastName, isLeader, email, password)
+		public Scout(int id, string firstName, string lastName, bool isLeader, string email, byte[] password, int age, List<Skill> skills) : base(id, firstName, lastName, isLeader, email, password)
 		{
 			_age = age;
 			_skills = skills;

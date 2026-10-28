@@ -14,7 +14,7 @@ namespace PSClassLib
     {
         #region instance fields
 
-        private readonly UserRepo _repo;
+        private readonly IRepo<User> _repo;
         #endregion
 
         #region Properties
@@ -22,7 +22,7 @@ namespace PSClassLib
         #endregion
 
         #region Constructors
-        public UserService(UserRepo repo)
+        public UserService(IRepo<User> repo)
         {
             _repo = repo;
         }
@@ -32,23 +32,17 @@ namespace PSClassLib
 
 
 
-        public bool ValidateUser(string userName, string password)
+        public User ValidateUser(int userId, string password)
         {
-            try
-            {
-                User user = _repo.GetByEmail(userName);
 
+                User user = _repo.GetById(userId);
                 using (SHA256 mySHA256 = SHA256.Create())
                 {
                     byte[] passwordCode = mySHA256.ComputeHash(Encoding.UTF8.GetBytes(password));
-
-                    return user?.Password.SequenceEqual(passwordCode) ?? false;
-                }
-            }
-            catch (KeyNotFoundException)
-            {
-                return false;
-            }
+                if (user.Password.SequenceEqual(passwordCode))
+                    return user;
+                }       
+                throw new UnauthorizedAccessException("Invalid password.");
         }
 
 

@@ -14,7 +14,8 @@ namespace PSClassLib.Model
 
         SqlConnection _connection;
 
-        private string _connectionString;
+        // readonly because we don't want to change the connection string after it's set. We want to keep it secure and not allow it to be modified.
+        private readonly string _connectionString;
 
         #endregion
 
@@ -48,14 +49,10 @@ namespace PSClassLib.Model
         public SqlConnection Connection
         {
             get {  return _connection; }
-            set { _connection = value; }
+
         }
 
-        public string ConnectionString
-        {
-            get { return _connectionString; }
-            set { _connectionString = value; }
-        }
+
 
         #endregion
 

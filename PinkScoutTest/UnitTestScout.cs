@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using PSClassLib.Model;
 using PSClassLib.Repo;
+using System.Text;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PinkScoutTest
@@ -108,12 +109,52 @@ namespace PinkScoutTest
 
         // Testing ReadAll on scouts
         [Fact]
-        public void ReadAllScouts()
+        public void ReadAllScoutsTrue()
         {
-          
+            // Arrange & Act     
+            List<Scout> scouts = _repo.ReadAll();
+            // Assert
+            Assert.NotNull(scouts);
+            Assert.Contains(scouts, s => s.FirstName == "John" && s.LastName == "Doe" && s.Id == _mockScoutUserId1);
+            Assert.Contains(scouts, s => s.FirstName == "Jane" && s.LastName == "Smith" && s.Id == _mockScoutUserId2);
+            Assert.Equal(2, scouts.Count); 
         }
 
+        [Fact]
+        public void ReadAllScoutsFalse()
+        {
+            // Arrange & Act     
+            List<Scout> scouts = _repo.ReadAll();
+            // Assert
+            Assert.NotNull(scouts);
+            Assert.DoesNotContain(scouts, s => s.FirstName == "Alice" && s.LastName == "Johnson");
+            Assert.DoesNotContain(scouts, s => s.FirstName == "Bob" && s.LastName == "Brown");
+            Assert.Equal(2, scouts.Count);
+        }
 
+        [Fact]
+        public void CreateScoutAndVerify()
+        {
+            // Arrange
+
+            string pass = "HashedPassword789";
+            var newScout = new Scout
+            {
+                FirstName = "Alice",
+                LastName = "Johnson",
+                Age = 15,
+                Email = "alice.johnson@scouts.org",
+                Password = Encoding.ASCII.GetBytes(pass)
+            };
+
+            // Act
+            _repo.Create(newScout);
+
+            // Assert
+            List<Scout> scouts = _repo.ReadAll();
+            Assert.Contains(scouts, s => s.FirstName == "Alice" && s.LastName == "Johnson");
+
+        }
 
         public void Dispose()
         {
