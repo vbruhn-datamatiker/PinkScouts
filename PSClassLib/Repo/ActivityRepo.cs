@@ -84,7 +84,7 @@ namespace PSClassLib.Repo
 			List<Activity> activityList = new List<Activity>();
 			_db.ConnectToDatabase();
 
-			string sql = "SELECT * FROM Activity";
+			string sql = "SELECT * FROM ACTIVITY";
 			SqlCommand cmd = new SqlCommand(sql, Db.Connection);
 			SqlDataReader reader = cmd.ExecuteReader();
 
