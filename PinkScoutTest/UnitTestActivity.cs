@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using PSClassLib.Model;
 using PSClassLib.Repo;
+using System.Diagnostics;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PinkScoutTest
@@ -12,13 +13,24 @@ namespace PinkScoutTest
 
         public UnitTestActivitiesDB()
         {
-
-            _db = new PSDBConnection("YourTestDatabaseConnectionStringHere");
+            // Replace with your actual test database connection string
+            string connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=PinkScoutsTest;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False;Command Timeout=30"; 
+            _db = new PSDBConnection(connectionString);
             _repository = new ActivityRepo(_db);
 
             // Setup/Seed your test database state here before each test runs
             SetupTestDatabase();
         }
+
+        [Fact]
+        public void ReadAll_ActivitiesFromDatabase_ReturnsAllActivities()
+        {
+            List<PSClassLib.Model.Activity> result = _repository.ReadAll();
+
+            Assert.NotNull(result);
+            Assert.Equal(3, result.Count);
+        }
+
 
         [Fact]
         public void GetById_WhenActivityExists_ReturnsActivity()
@@ -27,7 +39,7 @@ namespace PinkScoutTest
             int existingId = 1;
 
             // Act
-            Activity result = _repository.GetById(existingId);
+            PSClassLib.Model.Activity result = _repository.GetById(existingId);
 
             // Assert
             Assert.NotNull(result);
@@ -53,18 +65,24 @@ namespace PinkScoutTest
 
 
             // Clear existing data
-            string clearSql = "DELETE FROM Activity";
+            string sql = @"
+            TRUNCATE TABLE ACTIVITY;
+        
+            SET IDENTITY_INSERT ACTIVITY ON;
 
-            
-            SqlCommand cmd1 = new SqlCommand(clearSql, _db.Connection);
+            INSERT INTO ACTIVITY (ActivityId, ActivityName, Description) VALUES 
+            (1, 'Running', 'Outdoor running session in the park.'),
+            (2, 'Swimming', 'Indoor lap swimming at the local pool.'),
+            (3, 'Yoga', 'Stretching and mindfulness practice.');
 
-            // Insert a dummy activity for testing
-            string insertSql = "INSERT INTO Activity (ActivityId, ActivityName, Description) VALUES (1, 'Test Activity', 'This is a test activity')";
-            SqlCommand cmd2 = new SqlCommand(insertSql, _db.Connection);
-            
+            SET IDENTITY_INSERT ACTIVITY OFF;
+            ";
+
+            SqlCommand cmd = new SqlCommand(sql, _db.Connection);
+
             // Execute the commands
-            cmd1.ExecuteNonQuery();
-            cmd2.ExecuteNonQuery();
+            cmd.ExecuteNonQuery();
+
 
             // Disconnect from the database after setup
             _db.DisconnectFromDatabase();
