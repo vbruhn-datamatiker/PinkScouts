@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using PSClassLib.Model;
 using PSClassLib.Repo;
+using System.Text;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PinkScoutTest
@@ -108,7 +109,7 @@ namespace PinkScoutTest
 
         // Testing ReadAll on scouts
         [Fact]
-        public void ReadAllScouts()
+        public void ReadAllScoutsTrue()
         {
             // Arrange & Act     
             List<Scout> scouts = _repo.ReadAll();
@@ -120,7 +121,29 @@ namespace PinkScoutTest
 
         }
 
+        [Fact]
+        public void CreateScoutAndVerify()
+        {
+            // Arrange
 
+            string pass = "HashedPassword789";
+            var newScout = new Scout
+            {
+                FirstName = "Alice",
+                LastName = "Johnson",
+                Age = 15,
+                Email = "alice.johnson@scouts.org",
+                Password = Encoding.ASCII.GetBytes(pass)
+            };
+
+            // Act
+            _repo.Create(newScout);
+
+            // Assert
+            List<Scout> scouts = _repo.ReadAll();
+            Assert.Contains(scouts, s => s.FirstName == "Alice" && s.LastName == "Johnson");
+
+        }
 
         public void Dispose()
         {

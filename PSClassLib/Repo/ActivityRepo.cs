@@ -9,45 +9,32 @@ using PSClassLib.Interface;
 
 namespace PSClassLib.Repo
 {
-	public class ActivityRepo : IRepo<Activity>
+	public class ActivityRepo : BasicDB, IRepo<Activity>
 	{
 		#region instance fields
 
-		private PSDBConnection _db = new PSDBConnection();
 		#endregion
 
 		#region Properties
 		
-		public PSDBConnection Db
-		{
-			get { return _db; }
-			set { _db = value; }
-		}
 		#endregion
 
-		#region Constructors
-		public ActivityRepo()
+
+        #region Constructors
+		public ActivityRepo(PSDBConnection dB) : base(dB)
 		{
-		
-			_db = new PSDBConnection();
-		}
-		public ActivityRepo(PSDBConnection dB)
-		{
-		
-			_db = dB;
 		}
 		#endregion
 
 		#region Methods
 		public Activity GetById(int id)
 		{
-			_db.ConnectToDatabase();
+			Db.ConnectToDatabase();
 
-			string sql = "SELECT * FROM ACTIVITY WHERE ActivityId = @ActivityId";
+			string sql = "SELECT * FROM Activity WHERE ActivityId = @ActivityId";
 
-			SqlCommand cmd = new SqlCommand(sql, _db.Connection);
-            cmd.Parameters.AddWithValue("@ActivityId", id);
-            SqlDataReader reader = cmd.ExecuteReader();
+			SqlCommand cmd = new SqlCommand(sql, Db.Connection);
+			SqlDataReader reader = cmd.ExecuteReader();
 			Activity? activity = null;
 
 			if (reader.Read())
@@ -60,10 +47,10 @@ namespace PSClassLib.Repo
 			}
 			else
 			{
-				_db.DisconnectFromDatabase();
+				Db.DisconnectFromDatabase();
 				throw new Exception($"aktivitet med {id} findes ikke.");
 			}
-			_db.DisconnectFromDatabase();
+			Db.DisconnectFromDatabase();
 			return activity;
 		}
 
@@ -71,11 +58,11 @@ namespace PSClassLib.Repo
 
 		public Activity Create(Activity activity)
 		{
-			_db.ConnectToDatabase();
+			Db.ConnectToDatabase();
 
 			string sql = $"INSERT into * (ActivityId, ActivityName, Description) VALUES (@ActivityId, @ActivityName, @Description)";
 
-			SqlCommand cmd = new SqlCommand(sql, _db.Connection);
+			SqlCommand cmd = new SqlCommand(sql, Db.Connection);
 			cmd.Parameters.AddWithValue("@ActivityId", activity.Id);
 			cmd.Parameters.AddWithValue("@ActivityName", activity.ActivityName);
 			cmd.Parameters.AddWithValue("@Description", activity.Description);
@@ -98,7 +85,7 @@ namespace PSClassLib.Repo
 			_db.ConnectToDatabase();
 
 			string sql = "SELECT * FROM ACTIVITY";
-			SqlCommand cmd = new SqlCommand(sql, _db.Connection);
+			SqlCommand cmd = new SqlCommand(sql, Db.Connection);
 			SqlDataReader reader = cmd.ExecuteReader();
 
 			while(reader.Read())
@@ -112,7 +99,7 @@ namespace PSClassLib.Repo
 
 				activityList.Add(activity);
 			}
-			_db.DisconnectFromDatabase();
+			Db.DisconnectFromDatabase();
 			return activityList;
 		}
 
@@ -145,7 +132,7 @@ namespace PSClassLib.Repo
 		{
 			Activity activity = GetById(idToRemove);
 			_db.ConnectToDatabase();
-			string sql = $"DELETE FROM ACTIVITY WHERE ActivityId = @ActivityId";
+			string sql = $"DELETE FROM Activity WHERE ActivityId = {idToRemove}";
 
 			SqlCommand cmd = new SqlCommand(sql, _db.Connection);
 

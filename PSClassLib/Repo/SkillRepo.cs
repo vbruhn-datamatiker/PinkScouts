@@ -6,31 +6,26 @@ using PSClassLib.Model;
 
 namespace PSClassLib.Repo
 {
-	public class SkillRepo : IRepo<Skill>
+	public class SkillRepo : BasicDB, IRepo<Skill>
 	{
         #region instance fields
-        private PSDBConnection _db = new PSDBConnection();
+
         #endregion
 
         #region Properties
 
-        public PSDBConnection Db
-        {
-            get { return _db; }
-            set { _db = value; }
-        }
 
         #endregion
 
         #region Constructors
         #endregion
-        public SkillRepo()
-		{
-			_db = new PSDBConnection();
-        }
-		public SkillRepo(PSDBConnection db)
-		{
-			_db = db;
+
+
+
+
+        public SkillRepo(PSDBConnection db) : base(db)
+        {
+
 		}
 
 

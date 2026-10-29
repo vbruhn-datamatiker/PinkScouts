@@ -6,29 +6,19 @@ using PSClassLib.Interface;
 
 namespace PSClassLib.Repo
 {
-    public class ScheduleRepo : IRepo<Schedule>
+    public class ScheduleRepo : BasicDB, IRepo<Schedule>
     {
         #region instance fields
 
-        private PSDBConnection _db;
         #endregion
         #region properties
-        public PSDBConnection Db
-        {
-            get { return _db; }
-            set { _db = value; }
-        }
+
         #endregion
         #region constructors
-        public ScheduleRepo()
+
+        public ScheduleRepo(PSDBConnection dB) : base(dB)
         {
 
-            _db = new PSDBConnection();
-        }
-        public ScheduleRepo(PSDBConnection dB)
-        {
-
-            _db = dB;
         }
 
 
