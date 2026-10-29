@@ -5,96 +5,69 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PinkScoutTest
 {
-    public class UnitTestActivitiesDB : IDisposable
+    public class UnitTestActivitiesDB 
     {
-        #region instance fields
+        private readonly ActivityRepo _repository;
         private readonly PSDBConnection _db;
-        private readonly ActivityRepo _repo;
-        private readonly SqlTransaction _transaction;
 
-        #endregion
-
-
-        // Setup of Test data for activities
-
-        #region Constructor
         public UnitTestActivitiesDB()
         {
-            // setup of location connection to test data on. 
 
-            // Update the local DB connection string here
-            string conString = "";
-            _db = new PSDBConnection(conString);
+            _db = new PSDBConnection("YourTestDatabaseConnectionStringHere");
+            _repository = new ActivityRepo(_db);
 
-            // Open the connection using PSDBConnection
-            _db.ConnectToDatabase();
-
-            // Start a transaction to contain our mock data lifecycle
-            _transaction = _db.Connection.BeginTransaction();
-
-            // Initialize the system under test
-            _repo = new ActivityRepo(_db);
-
-            // Seed the mockup data directly inside this test setup
-            CreateMockupData();
-
-        }
-        #endregion
-
-        #region Methods
-
-        private void CreateMockupData()
-        {
-            // We MUST pass the active transaction to these commands so they are isolated
-            string insertQuery = @"
-            INSERT INTO ACTIVITY (ActivityName, Description) 
-            VALUES 
-            (@Name1, @Desc1),
-            (@Name2, @Desc2);";
-
-            using (var command = new SqlCommand(insertQuery, _db.Connection, _transaction))
-            {
-                command.Parameters.AddWithValue("@Name1", "Mock Campfire Night");
-                command.Parameters.AddWithValue("@Desc1", "Mocked Campfire Description");
-                command.Parameters.AddWithValue("@Name2", "Mock First Aid Basics");
-                command.Parameters.AddWithValue("@Desc2", "Mocked First Aid Description");
-
-                command.ExecuteNonQuery();
-            }
+            // Setup/Seed your test database state here before each test runs
+            SetupTestDatabase();
         }
 
-        #endregion
-
-        #region Unit Tests
-
-
-        // Testing ReadAll on activities
         [Fact]
-        public void ReadAllActivities()
+        public void GetById_WhenActivityExists_ReturnsActivity()
         {
-            // Arrange & Act     
-            List<Activity> activities = _repo.ReadAll();
+            // Arrange: Insert a dummy activity into your test DB manually or via script
+            int existingId = 1;
+
+            // Act
+            Activity result = _repository.GetById(existingId);
 
             // Assert
-            Assert.NotNull(activities);
-            Assert.Contains("Mock Campfire Night", activities[1].ActivityName);
-            Assert.Contains("Mock First Aid Basics", activities[2].ActivityName);
-            Assert.Equal(2, activities.Count);
+            Assert.NotNull(result);
+            Assert.Equal(existingId, result.Id);
+            Assert.Equal("Test Activity", result.ActivityName);
         }
 
-
-
-        public void Dispose()
+        [Fact]
+        public void GetById_WhenActivityDoesNotExist_ThrowsException()
         {
-            // Roll back the transaction. 
-            // This instantly deletes the mockup data from the local DB.
-            _transaction.Rollback();
-            _transaction.Dispose();
+            // Arrange
+            int nonExistingId = 99999;
 
-            // Safely disconnect from the Database.
+            // Act & Assert
+            var exception = Assert.Throws<Exception>(() => _repository.GetById(nonExistingId));
+            Assert.Contains($"aktivitet med {nonExistingId} findes ikke.", exception.Message);
+        }
+
+        private void SetupTestDatabase()
+        {
+            // connect to the test database and set up the necessary state for testing
+            _db.ConnectToDatabase();
+
+
+            // Clear existing data
+            string clearSql = "DELETE FROM Activity";
+
+            
+            SqlCommand cmd1 = new SqlCommand(clearSql, _db.Connection);
+
+            // Insert a dummy activity for testing
+            string insertSql = "INSERT INTO Activity (ActivityId, ActivityName, Description) VALUES (1, 'Test Activity', 'This is a test activity')";
+            SqlCommand cmd2 = new SqlCommand(insertSql, _db.Connection);
+            
+            // Execute the commands
+            cmd1.ExecuteNonQuery();
+            cmd2.ExecuteNonQuery();
+
+            // Disconnect from the database after setup
             _db.DisconnectFromDatabase();
         }
-
-        #endregion
     }
 }
