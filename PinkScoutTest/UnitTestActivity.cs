@@ -71,13 +71,14 @@ namespace PinkScoutTest
             ";
 
             string sqlInsert = @"
+            
 
             INSERT INTO ACTIVITY (ActivityId, ActivityName, Description) VALUES 
             (1, 'Running', 'Outdoor running session in the park.'),
             (2, 'Swimming', 'Indoor lap swimming at the local pool.'),
             (3, 'Yoga', 'Stretching and mindfulness practice.');
 
-            SET IDENTITY_INSERT ACTIVITY OFF;
+            
             ";
 
             SqlCommand cmd = new SqlCommand(sqlDelete, _db.Connection);
