@@ -33,9 +33,10 @@ namespace PSClassLib.Repo
 
 			string sql = "SELECT * FROM Activity WHERE ActivityId = @ActivityId";
 
-			SqlCommand cmd = new SqlCommand(sql, Db.Connection);
-			SqlDataReader reader = cmd.ExecuteReader();
-			Activity? activity = null;
+            SqlCommand cmd = new SqlCommand(sql, _db.Connection);
+            cmd.Parameters.AddWithValue("@ActivityId", id);
+            SqlDataReader reader = cmd.ExecuteReader();
+            Activity? activity = null;
 
 			if (reader.Read())
 			{

@@ -8,14 +8,13 @@ namespace PinkScoutTest
 {
     public class UnitTestActivitiesDB 
     {
-        private ActivityRepo _repository;
-        private PSDBConnection _db;
+        private readonly ActivityRepo _repository;
+        private readonly PSDBConnection _db;
+        private readonly string _connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=PinkScoutsTest;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False;Command Timeout=30";
 
         public UnitTestActivitiesDB()
         {
-            // Replace with your actual test database connection string
-            string connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=PinkScoutsTest;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False;Command Timeout=30"; 
-            _db = new PSDBConnection(connectionString);
+            _db = new PSDBConnection(_connectionString);
             _repository = new ActivityRepo(_db);
 
             // Setup/Seed your test database state here before each test runs
@@ -28,7 +27,7 @@ namespace PinkScoutTest
             List<PSClassLib.Model.Activity> result = _repository.ReadAll();
 
             Assert.NotNull(result);
-            Assert.Equal(400, result.Count);
+            Assert.Equal(3, result.Count);
         }
 
 
@@ -63,33 +62,48 @@ namespace PinkScoutTest
             // connect to the test database and set up the necessary state for testing
             _db.ConnectToDatabase();
 
+            const string sql = @"
+                DELETE FROM SCOUT_ACTIVITY;
+                DELETE FROM ACTIVITY_SCHEDULE;
+                DELETE FROM ACTIVITY;
 
-            // Clear any existing data and insert mock data for activities
-            string sqlDelete = @"
+                DBCC CHECKIDENT ('ACTIVITY', RESEED, 0) WITH NO_INFOMSGS;
 
-            DELETE FROM ACTIVITY;    
-            ";
+                SET IDENTITY_INSERT ACTIVITY ON;
 
-            string sqlInsert = @"
-            
+                WITH Numbers AS
+                (
+                    SELECT TOP (3)
+                        ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) AS ActivityId
+                    FROM sys.all_objects AS a
+                    CROSS JOIN sys.all_objects AS b
+                )
+                INSERT INTO ACTIVITY (ActivityId, ActivityName, [Description])
+                SELECT ActivityId,
+                       CONCAT('Activity ', ActivityId),
+                       CONCAT('Test activity ', ActivityId)
+                FROM Numbers;
 
-            INSERT INTO ACTIVITY (ActivityId, ActivityName, Description) VALUES 
-            (1, 'Running', 'Outdoor running session in the park.'),
-            (2, 'Swimming', 'Indoor lap swimming at the local pool.'),
-            (3, 'Yoga', 'Stretching and mindfulness practice.');
+                SET IDENTITY_INSERT ACTIVITY OFF;
 
-            
-            ";
+                UPDATE ACTIVITY
+                SET ActivityName = CASE ActivityId
+                        WHEN 1 THEN 'Running'
+                        WHEN 2 THEN 'Swimming'
+                        WHEN 3 THEN 'Yoga'
+                    END,
+                    [Description] = CASE ActivityId
+                        WHEN 1 THEN 'Outdoor running session in the park.'
+                        WHEN 2 THEN 'Indoor lap swimming at the local pool.'
+                        WHEN 3 THEN 'Stretching and mindfulness practice.'
+                    END
+                WHERE ActivityId IN (1, 2, 3);";
 
-            SqlCommand cmd = new SqlCommand(sqlDelete, _db.Connection);
-            SqlCommand cmd2 = new SqlCommand(sqlInsert, _db.Connection);
+            using (SqlCommand command = new SqlCommand(sql, _db.Connection))
+            {
+                command.ExecuteNonQuery();
+            }
 
-            // Execute the commands
-            cmd.ExecuteNonQuery();
-            cmd2.ExecuteNonQuery();
-
-
-            // Disconnect from the database after setup
             _db.DisconnectFromDatabase();
         }
     }
