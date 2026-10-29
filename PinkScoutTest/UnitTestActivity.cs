@@ -8,13 +8,13 @@ namespace PinkScoutTest
 {
     public class UnitTestActivitiesDB 
     {
-        private readonly ActivityRepo _repository;
-        private readonly PSDBConnection _db;
+        private ActivityRepo _repository;
+        private PSDBConnection _db;
 
-        public UnitTestActivitiesDB()
+        private UnitTestActivitiesDB()
         {
             // Replace with your actual test database connection string
-            string connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=PinkScoutsTest;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False;Command Timeout=30"; 
+            string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=PinkScoutsTest;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False;Command Timeout=30"; 
             _db = new PSDBConnection(connectionString);
             _repository = new ActivityRepo(_db);
 
@@ -64,7 +64,7 @@ namespace PinkScoutTest
             _db.ConnectToDatabase();
 
 
-            // Clear existing data
+            // Clear any existing data and insert mock data for activities
             string sql = @"
             TRUNCATE TABLE ACTIVITY;
         
