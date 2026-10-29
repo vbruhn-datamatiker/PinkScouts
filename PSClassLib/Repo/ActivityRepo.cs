@@ -43,10 +43,11 @@ namespace PSClassLib.Repo
 		{
 			_db.ConnectToDatabase();
 
-			string sql = "SELECT * FROM Activities WHERE ActivityId = @ActivityId";
+			string sql = "SELECT * FROM ACTIVITY WHERE ActivityId = @ActivityId";
 
 			SqlCommand cmd = new SqlCommand(sql, _db.Connection);
-			SqlDataReader reader = cmd.ExecuteReader();
+            cmd.Parameters.AddWithValue("@ActivityId", id);
+            SqlDataReader reader = cmd.ExecuteReader();
 			Activity? activity = null;
 
 			if (reader.Read())
@@ -96,7 +97,7 @@ namespace PSClassLib.Repo
 			List<Activity> activityList = new List<Activity>();
 			_db.ConnectToDatabase();
 
-			string sql = "SELECT * FROM Activities";
+			string sql = "SELECT * FROM ACTIVITY";
 			SqlCommand cmd = new SqlCommand(sql, _db.Connection);
 			SqlDataReader reader = cmd.ExecuteReader();
 
@@ -144,7 +145,7 @@ namespace PSClassLib.Repo
 		{
 			Activity activity = GetById(idToRemove);
 			_db.ConnectToDatabase();
-			string sql = $"DELETE FROM Activites WHERE ActivityId = {idToRemove}";
+			string sql = $"DELETE FROM ACTIVITY WHERE ActivityId = @ActivityId";
 
 			SqlCommand cmd = new SqlCommand(sql, _db.Connection);
 

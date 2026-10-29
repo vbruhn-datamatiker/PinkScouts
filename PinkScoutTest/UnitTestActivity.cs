@@ -11,10 +11,10 @@ namespace PinkScoutTest
         private ActivityRepo _repository;
         private PSDBConnection _db;
 
-        private UnitTestActivitiesDB()
+        public UnitTestActivitiesDB()
         {
             // Replace with your actual test database connection string
-            string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=PinkScoutsTest;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False;Command Timeout=30"; 
+            string connectionString = "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=PinkScoutsTest;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False;Command Timeout=30"; 
             _db = new PSDBConnection(connectionString);
             _repository = new ActivityRepo(_db);
 
@@ -28,7 +28,7 @@ namespace PinkScoutTest
             List<PSClassLib.Model.Activity> result = _repository.ReadAll();
 
             Assert.NotNull(result);
-            Assert.Equal(3, result.Count);
+            Assert.Equal(400, result.Count);
         }
 
 
@@ -44,7 +44,7 @@ namespace PinkScoutTest
             // Assert
             Assert.NotNull(result);
             Assert.Equal(existingId, result.Id);
-            Assert.Equal("Test Activity", result.ActivityName);
+            Assert.Equal("Running", result.ActivityName);
         }
 
         [Fact]
@@ -65,10 +65,12 @@ namespace PinkScoutTest
 
 
             // Clear any existing data and insert mock data for activities
-            string sql = @"
-            TRUNCATE TABLE ACTIVITY;
-        
-            SET IDENTITY_INSERT ACTIVITY ON;
+            string sqlDelete = @"
+
+            DELETE FROM ACTIVITY;    
+            ";
+
+            string sqlInsert = @"
 
             INSERT INTO ACTIVITY (ActivityId, ActivityName, Description) VALUES 
             (1, 'Running', 'Outdoor running session in the park.'),
@@ -78,10 +80,12 @@ namespace PinkScoutTest
             SET IDENTITY_INSERT ACTIVITY OFF;
             ";
 
-            SqlCommand cmd = new SqlCommand(sql, _db.Connection);
+            SqlCommand cmd = new SqlCommand(sqlDelete, _db.Connection);
+            SqlCommand cmd2 = new SqlCommand(sqlInsert, _db.Connection);
 
             // Execute the commands
             cmd.ExecuteNonQuery();
+            cmd2.ExecuteNonQuery();
 
 
             // Disconnect from the database after setup
