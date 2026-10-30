@@ -1,0 +1,28 @@
+@page
+@model PinkScouts.Pages.ActivityDetailsModel
+@{
+	ViewData["Title"] = Model.Activity?.ActivityName ?? "Aktivitet";
+}
+
+<section class="page-header">
+	<h1 class="fw-bold">@Model.Activity?.ActivityName</h1>
+</section>
+
+
+<!-- === assigns a description to each activity=== -->
+
+<div class="card activity-card">
+	<div class="card-body">
+		<h2 class="h5 card-title">Om aktiviteten</h2>
+		<p class="card-text">@Model.Activity?.Description</p>
+		<a class="btn btn-secondary" asp-page="/Activities">Tilbage til aktiviteter</a>
+
+		<!-- === creates a hidden button which looks at the activityId and when pressed submit, it removes the activity from the database === -->
+
+		<form method="post" asp-page-handler="Delete">
+			<input type="hidden" name="id" value="@Model.Activity?.Id" />
+			<input type="submit" class="btn btn-danger" value="Slet aktivitet" />
+		</form>
+	</div>
+</div>
+
