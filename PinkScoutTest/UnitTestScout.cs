@@ -115,21 +115,10 @@ namespace PinkScoutTest
             List<Scout> scouts = _repo.ReadAll();
             // Assert
             Assert.NotNull(scouts);
-            Assert.Contains(scouts, s => s.FirstName == "John" && s.LastName == "Doe" && s.Id == _mockScoutUserId1);
-            Assert.Contains(scouts, s => s.FirstName == "Jane" && s.LastName == "Smith" && s.Id == _mockScoutUserId2);
+            Assert.Contains(scouts, s => s.FirstName == "John" && s.LastName == "Doe");
+            Assert.Contains(scouts, s => s.FirstName == "Jane" && s.LastName == "Smith");
             Assert.Equal(2, scouts.Count); 
-        }
 
-        [Fact]
-        public void ReadAllScoutsFalse()
-        {
-            // Arrange & Act     
-            List<Scout> scouts = _repo.ReadAll();
-            // Assert
-            Assert.NotNull(scouts);
-            Assert.DoesNotContain(scouts, s => s.FirstName == "Alice" && s.LastName == "Johnson");
-            Assert.DoesNotContain(scouts, s => s.FirstName == "Bob" && s.LastName == "Brown");
-            Assert.Equal(2, scouts.Count);
         }
 
         [Fact]

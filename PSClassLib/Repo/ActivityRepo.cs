@@ -61,20 +61,23 @@ namespace PSClassLib.Repo
 		{
 			Db.ConnectToDatabase();
 			// we have removed the ActivityId since we generate this in through the database
-			string sql = $"INSERT into Activity (ActivityName, Description) VALUES (@ActivityName, @Description)";
+			string sql = $"INSERT into Activity (ActivityName, Description) OUTPUT INSERTED.ActivityId VALUES (@ActivityName, @Description)";
 
 			SqlCommand cmd = new SqlCommand(sql, Db.Connection);
 		
 			cmd.Parameters.AddWithValue("@ActivityName", activity.ActivityName);
 			cmd.Parameters.AddWithValue("@Description", activity.Description);
 
-			int row = cmd.ExecuteNonQuery();
 
-			if (row == 0)
+			int id = (int)cmd.ExecuteScalar();
+
+			if (id == 0)
 			{
 				throw new KeyNotFoundException($"Aktivitet med {activity.Id} findes ikke");
 			}
-			_db.DisconnectFromDatabase();
+
+			activity.Id = id;	
+            _db.DisconnectFromDatabase();
 			return activity;
 		}
 
@@ -106,16 +109,19 @@ namespace PSClassLib.Repo
 
 		public Activity Update(Activity updatedActivity, int id)
 		{
-			Activity activity = GetById(id);
+	
 			_db.ConnectToDatabase();
 
-			string sql = $"UPDATE into Activity (ActivityName, Description) VALUES (@ActivityName, @Description)";
+			string sql = "UPDATE Activity SET ActivityName = @ActivityName, Description = @Description WHERE ActivityId = @ActivityId";
 			SqlCommand cmd = new SqlCommand(sql, _db.Connection);
 
 			cmd.Parameters.AddWithValue("@ActivityName", updatedActivity.ActivityName);
 			cmd.Parameters.AddWithValue("@Description", updatedActivity.Description);
+            cmd.Parameters.AddWithValue("@ActivityId", id);
 
-			int row = cmd.ExecuteNonQuery();
+			updatedActivity.Id = id; // Ensure the updated activity has the correct ID
+
+            int row = cmd.ExecuteNonQuery();
 			_db.DisconnectFromDatabase();
 
 			if (row == 1)
@@ -133,7 +139,7 @@ namespace PSClassLib.Repo
 		{
 			Activity activity = GetById(idToRemove);
 			_db.ConnectToDatabase();
-			string sql = $"DELETE FROM Activity WHERE ActivityId = {idToRemove}";
+			string sql = $"DELETE FROM Activity WHERE ActivityId = @ActivityId";
 
 			SqlCommand cmd = new SqlCommand(sql, _db.Connection);
 

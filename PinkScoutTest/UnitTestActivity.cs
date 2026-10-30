@@ -1,100 +1,146 @@
 ﻿using Microsoft.Data.SqlClient;
 using PSClassLib.Model;
 using PSClassLib.Repo;
+using System.Diagnostics;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace PinkScoutTest
 {
-    public class UnitTestActivitiesDB : IDisposable
+    public class UnitTestActivitiesDB 
     {
-        #region instance fields
+        private readonly ActivityRepo _repository;
         private readonly PSDBConnection _db;
-        private readonly ActivityRepo _repo;
-        private readonly SqlTransaction _transaction;
+        private readonly string _connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=PinkScoutsTest;Integrated Security=True;Connect Timeout=30;Encrypt=True;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False;Command Timeout=30";
 
-        #endregion
-
-
-        // Setup of Test data for activities
-
-        #region Constructor
         public UnitTestActivitiesDB()
         {
-            // setup of location connection to test data on. 
+            _db = new PSDBConnection(_connectionString);
+            _repository = new ActivityRepo(_db);
 
-            // Update the local DB connection string here
-            string conString = "";
-            _db = new PSDBConnection(conString);
-
-            // Open the connection using PSDBConnection
-            _db.ConnectToDatabase();
-
-            // Start a transaction to contain our mock data lifecycle
-            _transaction = _db.Connection.BeginTransaction();
-
-            // Initialize the system under test
-            _repo = new ActivityRepo(_db);
-
-            // Seed the mockup data directly inside this test setup
-            CreateMockupData();
-
-        }
-        #endregion
-
-        #region Methods
-
-        private void CreateMockupData()
-        {
-            // We MUST pass the active transaction to these commands so they are isolated
-            string insertQuery = @"
-            INSERT INTO ACTIVITY (ActivityName, Description) 
-            VALUES 
-            (@Name1, @Desc1),
-            (@Name2, @Desc2);";
-
-            using (var command = new SqlCommand(insertQuery, _db.Connection, _transaction))
-            {
-                command.Parameters.AddWithValue("@Name1", "Mock Campfire Night");
-                command.Parameters.AddWithValue("@Desc1", "Mocked Campfire Description");
-                command.Parameters.AddWithValue("@Name2", "Mock First Aid Basics");
-                command.Parameters.AddWithValue("@Desc2", "Mocked First Aid Description");
-
-                command.ExecuteNonQuery();
-            }
+            // Setup/Seed your test database state here before each test runs
+            SetupTestDatabase();
         }
 
-        #endregion
-
-        #region Unit Tests
-
-
-        // Testing ReadAll on activities
         [Fact]
-        public void ReadAllActivities()
+        public void ReadAll_ActivitiesFromDatabase_ReturnsAllActivities()
         {
-            // Arrange & Act     
-            List<Activity> activities = _repo.ReadAll();
+            List<PSClassLib.Model.Activity> result = _repository.ReadAll();
+
+            Assert.NotNull(result);
+            Assert.Equal(3, result.Count);
+        }
+
+
+        [Fact]
+        public void GetById_WhenActivityExists_ReturnsActivity()
+        {
+            // Arrange: Insert a dummy activity into your test DB manually or via script
+            int existingId = 1;
+
+            // Act
+            PSClassLib.Model.Activity result = _repository.GetById(existingId);
 
             // Assert
-            Assert.NotNull(activities);
-            Assert.Contains("Mock Campfire Night", activities[1].ActivityName);
-            Assert.Contains("Mock First Aid Basics", activities[2].ActivityName);
-            Assert.Equal(2, activities.Count);
+            Assert.NotNull(result);
+            Assert.Equal(existingId, result.Id);
+            Assert.Equal("Running", result.ActivityName);
+        }
+
+        [Fact]
+        public void GetById_WhenActivityDoesNotExist_ThrowsException()
+        {
+            // Arrange
+            int nonExistingId = 99999;
+
+            // Act & Assert
+            var exception = Assert.Throws<Exception>(() => _repository.GetById(nonExistingId));
+            Assert.Contains($"aktivitet med {nonExistingId} findes ikke.", exception.Message);
         }
 
 
-
-        public void Dispose()
+        [Fact]
+        public void Create_ValidActivity_AddsActivityToDatabase()
         {
-            // Roll back the transaction. 
-            // This instantly deletes the mockup data from the local DB.
-            _transaction.Rollback();
-            _transaction.Dispose();
+            // Arrange
+            PSClassLib.Model.Activity newActivity = new PSClassLib.Model.Activity
+            {
+                ActivityName = "Test Activity",
+                Description = "This is a test activity."
+            };
+            // Act
+            PSClassLib.Model.Activity createdActivity = _repository.Create(newActivity);
+            // Assert
+            Assert.NotNull(createdActivity);
+            Assert.True(createdActivity.Id > 0); // Assuming the ID is generated by the database
+            // Optionally, verify that the activity was actually added to the database
+            PSClassLib.Model.Activity fetchedActivity = _repository.GetById(createdActivity.Id);
+            Assert.Equal("Test Activity", fetchedActivity.ActivityName);
+        }
 
-            // Safely disconnect from the Database.
+        [Fact]
+        public void Update_ExistingActivity_UpdatesActivityInDatabase()
+        {
+            // Arrange
+            var existingActivity = _repository.GetById(1);
+            existingActivity.ActivityName = "Updated Activity Name";
+            // Act
+            PSClassLib.Model.Activity updatedActivity = _repository.Update(existingActivity, existingActivity.Id);
+            // Assert
+            Assert.NotNull(updatedActivity);
+            Assert.Equal("Updated Activity Name", updatedActivity.ActivityName);
+            // Optionally, verify that the activity was actually updated in the database
+            PSClassLib.Model.Activity fetchedActivity = _repository.GetById(existingActivity.Id);
+            Assert.Equal("Updated Activity Name", fetchedActivity.ActivityName);
+        }
+
+        private void SetupTestDatabase()
+        {
+            // connect to the test database and set up the necessary state for testing
+            _db.ConnectToDatabase();
+
+            const string sql = @"
+                DELETE FROM SCOUT_ACTIVITY;
+                DELETE FROM ACTIVITY_SCHEDULE;
+                DELETE FROM ACTIVITY;
+
+                DBCC CHECKIDENT ('ACTIVITY', RESEED, 0) WITH NO_INFOMSGS;
+
+                SET IDENTITY_INSERT ACTIVITY ON;
+
+                WITH Numbers AS
+                (
+                    SELECT TOP (3)
+                        ROW_NUMBER() OVER (ORDER BY (SELECT NULL)) AS ActivityId
+                    FROM sys.all_objects AS a
+                    CROSS JOIN sys.all_objects AS b
+                )
+                INSERT INTO ACTIVITY (ActivityId, ActivityName, [Description])
+                SELECT ActivityId,
+                       CONCAT('Activity ', ActivityId),
+                       CONCAT('Test activity ', ActivityId)
+                FROM Numbers;
+
+                SET IDENTITY_INSERT ACTIVITY OFF;
+
+                UPDATE ACTIVITY
+                SET ActivityName = CASE ActivityId
+                        WHEN 1 THEN 'Running'
+                        WHEN 2 THEN 'Swimming'
+                        WHEN 3 THEN 'Yoga'
+                    END,
+                    [Description] = CASE ActivityId
+                        WHEN 1 THEN 'Outdoor running session in the park.'
+                        WHEN 2 THEN 'Indoor lap swimming at the local pool.'
+                        WHEN 3 THEN 'Stretching and mindfulness practice.'
+                    END
+                WHERE ActivityId IN (1, 2, 3);";
+
+            using (SqlCommand command = new SqlCommand(sql, _db.Connection))
+            {
+                command.ExecuteNonQuery();
+            }
+
             _db.DisconnectFromDatabase();
         }
-
-        #endregion
     }
 }
