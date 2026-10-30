@@ -13,7 +13,7 @@
 
 <div class="card activity-card">
 	<div class="card-body">
-		<h2 class="h5 card-title">Om aktiviteten</h2>
+		<h2 class="h5 card-title">Om @Model.Activity.ActivityName</h2>
 		<p class="card-text">@Model.Activity?.Description</p>
 		<a class="btn btn-secondary" asp-page="/Activities">Tilbage til aktiviteter</a>
 
@@ -23,6 +23,11 @@
 			<input type="hidden" name="id" value="@Model.Activity?.Id" />
 			<input type="submit" class="btn btn-danger" value="Slet aktivitet" />
 		</form>
+
+		 <form method="post" asp-page-handler="Update">
+			<a class="btn btn-secondary" asp-page="/ActivitiesEdit">Updater aktivitet</a>
+			 </form>
+       
 	</div>
 </div>
 
