@@ -109,7 +109,7 @@ namespace PSClassLib.Repo
 			Activity activity = GetById(id);
 			_db.ConnectToDatabase();
 
-			string sql = $"update .........";
+			string sql = $"UPDATE into Activity (ActivityName, Description) VALUES (@ActivityName, @Description)";
 			SqlCommand cmd = new SqlCommand(sql, _db.Connection);
 
 			cmd.Parameters.AddWithValue("@ActivityName", updatedActivity.ActivityName);
