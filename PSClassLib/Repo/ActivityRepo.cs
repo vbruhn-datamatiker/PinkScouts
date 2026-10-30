@@ -33,10 +33,10 @@ namespace PSClassLib.Repo
 
 			string sql = "SELECT * FROM Activity WHERE ActivityId = @ActivityId";
 
-            SqlCommand cmd = new SqlCommand(sql, _db.Connection);
-            cmd.Parameters.AddWithValue("@ActivityId", id);
-            SqlDataReader reader = cmd.ExecuteReader();
-            Activity? activity = null;
+			SqlCommand cmd = new SqlCommand(sql, Db.Connection);
+			cmd.Parameters.AddWithValue("@ActivityId", id);
+			SqlDataReader reader = cmd.ExecuteReader();
+			Activity? activity = null;
 
 			if (reader.Read())
 			{
@@ -60,11 +60,11 @@ namespace PSClassLib.Repo
 		public Activity Create(Activity activity)
 		{
 			Db.ConnectToDatabase();
-
-			string sql = $"INSERT into * (ActivityId, ActivityName, Description) VALUES (@ActivityId, @ActivityName, @Description)";
+			// we have removed the ActivityId since we generate this in through the database
+			string sql = $"INSERT into Activity (ActivityName, Description) VALUES (@ActivityName, @Description)";
 
 			SqlCommand cmd = new SqlCommand(sql, Db.Connection);
-			cmd.Parameters.AddWithValue("@ActivityId", activity.Id);
+		
 			cmd.Parameters.AddWithValue("@ActivityName", activity.ActivityName);
 			cmd.Parameters.AddWithValue("@Description", activity.Description);
 
