@@ -109,7 +109,7 @@ namespace PSClassLib.Repo
 			Activity activity = GetById(id);
 			_db.ConnectToDatabase();
 
-			string sql = $"update .........";
+			string sql = "UPDATE Activity SET ActivityName = @ActivityName, Description = @Description WHERE ActivityId = @ActivityId";
 			SqlCommand cmd = new SqlCommand(sql, _db.Connection);
 
 			cmd.Parameters.AddWithValue("@ActivityName", updatedActivity.ActivityName);
@@ -133,7 +133,7 @@ namespace PSClassLib.Repo
 		{
 			Activity activity = GetById(idToRemove);
 			_db.ConnectToDatabase();
-			string sql = $"DELETE FROM Activity WHERE ActivityId = {idToRemove}";
+			string sql = $"DELETE FROM Activity WHERE ActivityId = @ActivityId";
 
 			SqlCommand cmd = new SqlCommand(sql, _db.Connection);
 
