@@ -38,14 +38,36 @@ else
 <div class="row g-4 pb-5">
     @foreach (var activity in Model.Activities)
     {
+        <!-- === creates a button for activityDetails === -->
         <div class="col-md-6 col-lg-4">
             <div class="card activity-card h-100">
                 <div class="card-body">
                     <h2 class="h5 card-title">@activity.ActivityName</h2>
                     <p class="card-text">@activity.Description</p>
+                    <a class="btn btn-primary" asp-page="/ActivityDetails" asp-route-id="@activity.Id">
+                        Læs mere
+                    </a>
                 </div>
             </div>
         </div>
     }
 </div>
 }
+
+<!-- === allow the user to create new activities === -->
+<div class="container mt-4">
+    <h2>Opret Ny Aktivitet</h2>
+    <form method="post" asp-page-handler="Create">
+    <div class="mb-3">
+            <label for="ActivityName" class="form-label">Aktivitetsnavn</label>
+            <input type="text" class="form-control" id="ActivityName" name="NewActivity.ActivityName" required />
+        </div>
+
+        <div class="mb-3">
+            <label for="Description" class="form-label">Beskrivelse</label>
+            <textarea class="form-control" id="Description" name="NewActivity.Description" rows="3" required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Opret aktivitet</button>
+    </form>
+</div>

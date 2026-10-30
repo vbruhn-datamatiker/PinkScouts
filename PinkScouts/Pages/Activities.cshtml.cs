@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using PSClassLib.Interface;
@@ -16,6 +17,39 @@ namespace PinkScouts.Pages
         {
             _repo = repo;
         }
+
+        [BindProperty]
+        public Activity NewActivity { get; set; } = new Activity();
+
+        public IActionResult OnPostCreate()
+        {
+            if (!ModelState.IsValid)
+            {
+                try
+                {
+                    Activities = _repo.ReadAll();
+                }
+                catch (Exception)
+                {
+                    ErrorMessage = "Fejl";
+                }
+                return Page();
+            }
+            try
+            {
+                _repo.Create(NewActivity);
+                return RedirectToPage();
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"kunne ikke oprette {ex.Message}";
+                try { Activities = _repo.ReadAll(); } catch { }
+                return Page();
+
+            }
+        }
+    
+
 
         public void OnGet()
         {
