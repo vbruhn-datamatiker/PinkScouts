@@ -28,6 +28,7 @@ namespace PinkScouts.Pages
         public string Name { get; set; } = string.Empty;
         
         [BindProperty]
+        [Required]
         [StringLength(250, MinimumLength = 10, ErrorMessage = "Beskrivelsen skal være mellem 10 og 250 tegn.")]
         public string Description { get; set; } = string.Empty;
 
@@ -36,11 +37,7 @@ namespace PinkScouts.Pages
         public IActionResult OnPostCreate()
         {
 
-            Activity newActivity = new Activity
-            {
-                ActivityName = Name,
-                Description = Description
-            };
+            Activity newActivity = new Activity(0, Name, Description);
 
             if (!ModelState.IsValid)
             {
