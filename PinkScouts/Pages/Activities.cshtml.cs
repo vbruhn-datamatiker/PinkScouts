@@ -1,4 +1,6 @@
+using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using PSClassLib.Interface;
@@ -18,11 +20,41 @@ namespace PinkScouts.Pages
             _repo = repo;
         }
 
+      
+
         [BindProperty]
-        public Activity NewActivity { get; set; } = new Activity();
+        [Required]
+        [StringLength(100, MinimumLength = 3, ErrorMessage = "Navnet skal være mellem 3 og 100 tegn.")]
+        public string Name { get; set; } = string.Empty;
+        
+        [BindProperty]
+        [StringLength(250, MinimumLength = 10, ErrorMessage = "Beskrivelsen skal være mellem 10 og 250 tegn.")]
+        public string Description { get; set; } = string.Empty;
+
+        public IActionResult OnPostDelete(int id)
+        {
+            try
+            {
+                _repo.Remove(id);
+                return RedirectToPage();
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = $"Kunne ikke slette aktiviteten: {ex.Message}";
+                try { Activities = _repo.ReadAll(); } catch { }
+                return Page();
+            }
+        }
 
         public IActionResult OnPostCreate()
         {
+
+            Activity newActivity = new Activity
+            {
+                ActivityName = Name,
+                Description = Description
+            };
+
             if (!ModelState.IsValid)
             {
                 try
@@ -37,7 +69,7 @@ namespace PinkScouts.Pages
             }
             try
             {
-                _repo.Create(NewActivity);
+                _repo.Create(newActivity);
                 return RedirectToPage();
             }
             catch (Exception ex)
