@@ -31,20 +31,7 @@ namespace PinkScouts.Pages
         [StringLength(250, MinimumLength = 10, ErrorMessage = "Beskrivelsen skal være mellem 10 og 250 tegn.")]
         public string Description { get; set; } = string.Empty;
 
-        public IActionResult OnPostDelete(int id)
-        {
-            try
-            {
-                _repo.Remove(id);
-                return RedirectToPage();
-            }
-            catch (Exception ex)
-            {
-                ErrorMessage = $"Kunne ikke slette aktiviteten: {ex.Message}";
-                try { Activities = _repo.ReadAll(); } catch { }
-                return Page();
-            }
-        }
+       
 
         public IActionResult OnPostCreate()
         {
