@@ -29,7 +29,7 @@ namespace PinkScouts.Pages
         
         [BindProperty]
         [Required]
-        [StringLength(250, MinimumLength = 10, ErrorMessage = "Beskrivelsen skal være mellem 10 og 250 tegn.")]
+        [RegularExpression(@"^.{10, 250}$", ErrorMessage = "Beskrivelsen skal være mellem 10 og 250 tegn.")]
         public string Description { get; set; } = string.Empty;
 
        
